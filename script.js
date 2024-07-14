@@ -83,6 +83,11 @@ axios.get("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
 
 // 3. Build an HTML page that lets you draw cards from a deck. When the page loads, go to the Deck of Cards API to create a new deck, and show a button on the page that will let you draw a card. Every time you click the button, display a new card, until there are no cards left in the deck.
 
+// Generate a random rotation between -10 and 10 degrees for each card
+function getRandomRotation() {
+    return Math.floor(Math.random() * 21) - 10;
+}
+
 $(document).ready(function() {
 
     let new_deck_id = ""
@@ -96,11 +101,11 @@ $(document).ready(function() {
     $('.card_game').append('<button class="draw_card">Draw Card</button>');
 
     $('.draw_card').on('click', function() {
-        axios.get((`https://deckofcardsapi.com/api/deck/${new_deck_id}/draw/?count=1`))
+        axios.get(`https://deckofcardsapi.com/api/deck/${new_deck_id}/draw/?count=1`)
             .then(res => {
-                console.log(res.data)
-                const card_drawn = res.data.cards[0]
-                $('.card_game').append(`<p>${card_drawn.value} OF ${card_drawn.suit}</p>`);
+                const card_drawn = res.data.cards[0];
+                const rotation = getRandomRotation();
+                $('.card_game').append(`<img src="${card_drawn.image}" class="card_image" style="transform: translate(-50%, -50%) rotate(${rotation}deg);"/>`);
             })
             .catch(err => {
                 console.error("Error drawing card:", err);
@@ -122,7 +127,7 @@ let pokemon_1_info = {}
 let pokemon_2_info = {}
 let pokemon_3_info = {}
 
-axios.get("https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0")
+axios.get("https://pokeapi.co/api/v2/pokemon-species?limit=5000&offset=0")
 .then(res => { 
     let all_pokemon = res.data.results
 
@@ -168,7 +173,7 @@ let pokemon_1_flavor_text = ""
 let pokemon_2_flavor_text = ""
 let pokemon_3_flavor_text = ""
 
-axios.get("https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0")
+axios.get("https://pokeapi.co/api/v2/pokemon-species?limit=5000&offset=0")
 .then(res => { 
     let all_pokemon = res.data.results
 
